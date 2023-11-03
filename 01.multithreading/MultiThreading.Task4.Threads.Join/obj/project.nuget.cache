@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "LfZ042YYzVxeP2eH0zcqHbC6JyQUKDXVI193GKg95IZJ9c6BvNwopYf0+fp9xbMMMRLEtqckgLR9aGiCzTZAVA==",
+  "success": true,
+  "projectFilePath": "/Users/sinan/Desktop/learn/01.multithreading/MultiThreading.Task4.Threads.Join/MultiThreading.Task4.Threads.Join.csproj",
+  "expectedPackageFiles": [
+    "/Users/sinan/.nuget/packages/microsoft.netcore.app/2.1.0/microsoft.netcore.app.2.1.0.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.netcore.dotnetapphost/2.1.0/microsoft.netcore.dotnetapphost.2.1.0.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.netcore.dotnethostpolicy/2.1.0/microsoft.netcore.dotnethostpolicy.2.1.0.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.netcore.dotnethostresolver/2.1.0/microsoft.netcore.dotnethostresolver.2.1.0.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.netcore.platforms/2.1.0/microsoft.netcore.platforms.2.1.0.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.netcore.targets/2.1.0/microsoft.netcore.targets.2.1.0.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
