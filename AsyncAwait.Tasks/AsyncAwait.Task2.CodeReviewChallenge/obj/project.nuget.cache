@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "z9ieAn+7xcfoDzPa3sYPD2wSUhwVn1At05VJ5sgvNnh1Szg0ke9e3GKKow900AYf5fAaaVifqQkEWwL4DWNr3g==",
+  "success": true,
+  "projectFilePath": "/Users/sinan/Desktop/learn/AsyncAwait.Tasks/AsyncAwait.Task2.CodeReviewChallenge/AsyncAwait.Task2.CodeReviewChallenge.csproj",
+  "expectedPackageFiles": [
+    "/Users/sinan/.nuget/packages/microsoft.netcore.app.ref/6.0.23/microsoft.netcore.app.ref.6.0.23.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.23/microsoft.aspnetcore.app.ref.6.0.23.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.netcore.app.host.osx-x64/6.0.23/microsoft.netcore.app.host.osx-x64.6.0.23.nupkg.sha512"
+  ],
+  "logs": []
+}
