@@ -1,0 +1,11 @@
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/bin/Debug/net6.0/CloudServices.deps.json
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/bin/Debug/net6.0/CloudServices.dll
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/bin/Debug/net6.0/CloudServices.pdb
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/CloudServices.GeneratedMSBuildEditorConfig.editorconfig
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/CloudServices.AssemblyInfoInputs.cache
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/CloudServices.AssemblyInfo.cs
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/CloudServices.csproj.CoreCompileInputs.cache
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/CloudServices.dll
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/refint/CloudServices.dll
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/CloudServices.pdb
+/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/obj/Debug/net6.0/ref/CloudServices.dll
