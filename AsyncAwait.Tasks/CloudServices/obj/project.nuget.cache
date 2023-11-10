@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "D4JIMmyRC0WcJuk0KAgzAZJnvA2GkJzgxIxE5hAsrzCRXup/elO3n+xkePYMMnlyXQ/zzmdfbDIOkS5lx11f+g==",
+  "success": true,
+  "projectFilePath": "/Users/sinan/Desktop/learn/AsyncAwait.Tasks/CloudServices/CloudServices.csproj",
+  "expectedPackageFiles": [
+    "/Users/sinan/.nuget/packages/microsoft.netcore.app.ref/6.0.23/microsoft.netcore.app.ref.6.0.23.nupkg.sha512",
+    "/Users/sinan/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.23/microsoft.aspnetcore.app.ref.6.0.23.nupkg.sha512"
+  ],
+  "logs": []
+}
