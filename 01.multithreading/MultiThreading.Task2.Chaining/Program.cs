@@ -19,7 +19,7 @@ namespace MultiThreading.Task2.Chaining
         const int TaskAmount = 4;
         public static List<int> taskList = new List<int>();
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             // Console.WriteLine(".Net Mentoring Program. MultiThreading V1 ");
             // Console.WriteLine("2.	Write a program, which creates a chain of four Tasks.");
@@ -40,6 +40,7 @@ namespace MultiThreading.Task2.Chaining
               task2.Start();
               task2.Wait();
             }
+            
             
             Task task3 = new Task(() => SortArray()); // Worker Task third sort and print updated array.
             task3.Start();
