@@ -30,33 +30,24 @@ namespace MultiThreading.Task4.Threads.Join
             Console.WriteLine();
             
             // feel free to add your code
-            
-            Thread t = new Thread(() => Worker(10));
-            t.Name = "1";
-            t.Start();
-
+            ThreadPool.QueueUserWorkItem(
+                    new WaitCallback(Worker), 10);
+            Thread.Sleep(10000);
             Console.ReadLine();
         }
 
-        private static void Worker(int count)
+        private static void Worker(Object ThreadCount)
         {
+            int count = Convert.ToInt32(ThreadCount);
                 if (count == 0) {
                     Console.WriteLine("Last Thread its end");
                 }else {
                         s.WaitOne();
                             Console.WriteLine("Thread " + count + " Processing");
                             count -= 1;
-                            Thread t = new Thread(() => Worker(count));
-                            t.Start();
+                             ThreadPool.QueueUserWorkItem(new WaitCallback(Worker), count);
                         s.Release();
-                    try 
-                    {
-                        t.Join();
-                    } 
-                    catch (Exception e) 
-                    {
-                       Console.WriteLine("Well... That didn't go as planned!");
-                    }
+                  
             }
         }
     }
