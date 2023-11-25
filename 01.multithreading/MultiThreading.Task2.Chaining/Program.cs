@@ -19,36 +19,20 @@ namespace MultiThreading.Task2.Chaining
         const int TaskAmount = 4;
         public static List<int> taskList = new List<int>();
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            // Console.WriteLine(".Net Mentoring Program. MultiThreading V1 ");
-            // Console.WriteLine("2.	Write a program, which creates a chain of four Tasks.");
-            // Console.WriteLine("First Task – creates an array of 10 random integer.");
-            // Console.WriteLine("Second Task – multiplies this array with another random integer.");
-            // Console.WriteLine("Third Task – sorts this array by ascending.");
-            // Console.WriteLine("Fourth Task – calculates the average value. All this tasks should print the values to console");
-            // Console.WriteLine();
 
             // feel free to add your code
-            Task task1 = new Task(FourTasks); // Worker Task first creates an array of 10 random integer.
-            task1.Start();
-            task1.Wait();
+            await Task.Run( () =>  FourTasks()); // Worker Task first creates an array of 10 random integer.
 
             for (int i = 0; i < TaskAmount; i++)
             {
-              Task task2 = new Task(() => MultipliesOperation(i)); // Worker Task second multiplies this array with another random integer.
-              task2.Start();
-              task2.Wait();
+              await Task.Run( () =>  MultipliesOperation(i)); // Worker Task second multiplies this array with another random integer.
             }
             
-            Task task3 = new Task(() => SortArray()); // Worker Task third sort and print updated array.
-            task3.Start();
-            task3.Wait();
+            await Task.Run( () =>  SortArray()); // Worker Task third sort and print updated array.
 
-            Task task4 = new Task(() => AvarageArray()); // Worker Task fourth average array.
-            task4.Start();
-            task4.Wait();
-            
+            await Task.Run( () =>  AvarageArray()); // Worker Task fourth average array.    
 
             Console.ReadLine();
         }

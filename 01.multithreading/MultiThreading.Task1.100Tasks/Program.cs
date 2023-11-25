@@ -29,9 +29,10 @@ namespace MultiThreading.Task1._100Tasks
 
             foreach (var task in taskList)
             {
-              Thread thread = new Thread(() => CallOperation(task)); // Worker Threads proceed to each tasks to iteration
-              
-              thread.Start();
+              //Thread thread = new Thread(() => CallOperation(task)); // Worker Threads proceed to each tasks to iteration
+              Task taskWork = new Task(() => CallOperation(task));
+              taskWork.Start();
+              taskWork.Wait();
             }
        
             Console.ReadLine();

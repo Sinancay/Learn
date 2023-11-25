@@ -33,7 +33,7 @@ public class StatisticMiddleware
         {
             context.Response.Headers.Add(
                 CustomHttpHeaders.TotalPageVisits,
-                _statisticService.GetVisitsCountAsync(path).GetAwaiter().GetResult().ToString());
+                _statisticService.GetVisitsCountAsync(path).Result.ToString());
         }
 
         Thread.Sleep(3000); // without this the statistic counter does not work
