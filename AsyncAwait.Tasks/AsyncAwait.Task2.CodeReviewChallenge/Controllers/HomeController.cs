@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using AsyncAwait.Task2.CodeReviewChallenge.Models;
 using AsyncAwait.Task2.CodeReviewChallenge.Models.Support;
@@ -27,13 +28,13 @@ public class HomeController : Controller
 
     public ActionResult Privacy()
     {
-        ViewBag.Message = _privacyDataService.GetPrivacyDataAsync().Result;
+        ViewBag.Message = Task.Run(() => _privacyDataService.GetPrivacyDataAsync()).Result;
         return View();
     }
 
     public async Task<IActionResult> Help()
     {
-        ViewBag.RequestInfo = await _assistant.RequestAssistanceAsync("guest").ConfigureAwait(false);
+        ViewBag.RequestInfo = Task.Run(() => _assistant.RequestAssistanceAsync("guest")).Result;
         return View();
     }
 
