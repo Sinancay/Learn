@@ -29,7 +29,7 @@ public class Worker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         ConnectionFactory factory = new();
-        factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
+        factory.Uri = new Uri("amqp://guest:guest@localhost:5672"); 
         factory.ClientProvidedName = "DataCaptureService Sender App";
 
         IConnection cnn = factory.CreateConnection();
