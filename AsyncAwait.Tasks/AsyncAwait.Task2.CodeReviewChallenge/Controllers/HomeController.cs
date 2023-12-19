@@ -32,9 +32,9 @@ public class HomeController : Controller
         return View();
     }
 
-    public ActionResult Help()
+    public async Task<IActionResult> Help()
     {
-        ViewBag.RequestInfo = _assistant.RequestAssistanceAsync("guest").Result;
+        ViewBag.RequestInfo = await  _assistant.RequestAssistanceAsync("guest").ConfigureAwait(false);
         return View();
     }
 
