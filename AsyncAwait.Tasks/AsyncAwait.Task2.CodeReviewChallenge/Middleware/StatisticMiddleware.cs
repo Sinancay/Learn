@@ -23,20 +23,12 @@ public class StatisticMiddleware
     {
         string path = context.Request.Path;
 
-        var staticRegTask = Task.Run(
-            () => _statisticService.RegisterVisitAsync(path)
-                .ConfigureAwait(false)
-                .GetAwaiter().OnCompleted(UpdateHeaders));
-        Console.WriteLine(staticRegTask.Status); // just for debugging purposes
+         await _statisticService.RegisterVisitAsync(path).ConfigureAwait(false); // it gives void method error when assign to variable
+        long visitsCount = await _statisticService.GetVisitsCountAsync(path).ConfigureAwait(false);
+        
+         context.Response.Headers.Add(CustomHttpHeaders.TotalPageVisits, visitsCount.ToString());
 
-        void UpdateHeaders()
-        {
-            context.Response.Headers.Add(
-                CustomHttpHeaders.TotalPageVisits,
-                _statisticService.GetVisitsCountAsync(path).GetAwaiter().GetResult().ToString());
-        }
-
-        Thread.Sleep(3000); // without this the statistic counter does not work
+        //Thread.Sleep(3000); // without this the statistic counter does not work but after awaiter I have closed this one 
         await _next(context);
     }
 }
