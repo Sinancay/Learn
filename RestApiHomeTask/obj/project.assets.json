@@ -2720,11 +2720,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/sinancay/Desktop/learn 3/restApi/RestApiHomeTask/RestApiHomeTask.csproj",
+      "projectUniqueName": "/Users/sinancay/Desktop/Learn/RestApiHomeTask/RestApiHomeTask.csproj",
       "projectName": "RestApiHomeTask",
-      "projectPath": "/Users/sinancay/Desktop/learn 3/restApi/RestApiHomeTask/RestApiHomeTask.csproj",
+      "projectPath": "/Users/sinancay/Desktop/Learn/RestApiHomeTask/RestApiHomeTask.csproj",
       "packagesPath": "/Users/sinancay/.nuget/packages/",
-      "outputPath": "/Users/sinancay/Desktop/learn 3/restApi/RestApiHomeTask/obj/",
+      "outputPath": "/Users/sinancay/Desktop/Learn/RestApiHomeTask/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/sinancay/.nuget/NuGet/NuGet.Config"
