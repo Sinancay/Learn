@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Expressions.Task3.E3SQueryProvider.Test": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
