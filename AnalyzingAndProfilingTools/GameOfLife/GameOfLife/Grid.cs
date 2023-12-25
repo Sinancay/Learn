@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,12 +34,10 @@ namespace GameOfLife
                 for (int j = 0; j < SizeY; j++)
                 {
                     cells[i, j] = new Cell(i, j, 0, false);
-                    nextGenerationCells[i, j] = new Cell(i, j, 0, false);
                 }
 
             SetRandomPattern();
             InitCellsVisuals();
-            UpdateGraphics();
             
         }
 
@@ -138,16 +137,16 @@ namespace GameOfLife
             {
                 for (int j = 0; j < SizeY; j++)
                 {
-                    //nextGenerationCells[i, j] = CalculateNextGeneration(i,j);          // UNOPTIMIZED
-                    CalculateNextGeneration(i, j, ref alive, ref age);   // OPTIMIZED
-                    nextGenerationCells[i, j].IsAlive = alive;  // OPTIMIZED
-                    nextGenerationCells[i, j].Age = age;  // OPTIMIZED
+                    nextGenerationCells[i, j] = CalculateNextGeneration(i,j);          // UNOPTIMIZED change to OPTIMIZED
+                    //CalculateNextGeneration(i, j, ref alive, ref age);   // UNOPTIMIZED
+                    //nextGenerationCells[i, j].IsAlive = alive;   // UNOPTIMIZED
+                    //nextGenerationCells[i, j].Age = age;   // UNOPTIMIZED
                 }
             }
             UpdateToNextGeneration();
         }
 
-        public Cell CalculateNextGeneration(int row, int column)    // UNOPTIMIZED
+        public Cell CalculateNextGeneration(int row, int column)    // OPTIMIZED
         {
             bool alive;
             int count;
@@ -208,14 +207,27 @@ namespace GameOfLife
         {
             int count = 0;
 
-            if (i != SizeX - 1 && cells[i + 1, j].IsAlive) count++;
-            if (i != SizeX - 1 && j != SizeY - 1 && cells[i + 1, j + 1].IsAlive) count++;
-            if (j != SizeY - 1 && cells[i, j + 1].IsAlive) count++;
-            if (i != 0 && j != SizeY - 1 && cells[i - 1, j + 1].IsAlive) count++;
-            if (i != 0 && cells[i - 1, j].IsAlive) count++;
-            if (i != 0 && j != 0 && cells[i - 1, j - 1].IsAlive) count++;
-            if (j != 0 && cells[i, j - 1].IsAlive) count++;
-            if (i != SizeX - 1 && j != 0 && cells[i + 1, j - 1].IsAlive) count++;
+            //if (i != SizeX - 1 && cells[i + 1, j].IsAlive) count++;
+            //if (i != SizeX - 1 && j != SizeY - 1 && cells[i + 1, j + 1].IsAlive) count++;
+            //if (j != SizeY - 1 && cells[i, j + 1].IsAlive) count++;
+            //if (i != 0 && j != SizeY - 1 && cells[i - 1, j + 1].IsAlive) count++;
+            //if (i != 0 && cells[i - 1, j].IsAlive) count++;
+            //if (i != 0 && j != 0 && cells[i - 1, j - 1].IsAlive) count++;
+            //if (j != 0 && cells[i, j - 1].IsAlive) count++;
+            //if (i != SizeX - 1 && j != 0 && cells[i + 1, j - 1].IsAlive) count++;
+
+            for(int f = i - 1; f <= i + 1; f++) //Redundant Loops are fixed here
+            {
+                for (int k = j - 1; k <= j + 1; k++)
+                {
+                    if (f == i && k == j) continue;
+
+                    if (f >= 0 && f < SizeX && k >= 0 && k < SizeY)
+                    {
+                        if (cells[f, k].IsAlive) count++;
+                    }
+                }
+            }
 
             return count;
         }

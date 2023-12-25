@@ -34,14 +34,16 @@ namespace ProfileSample.Controllers
             var temp = await Convert(); // First for added images db
 
             var model = new List<ImageModel>();
-            var context = new ProfileSampleEntities();
-
-            model = context.ImgSources.Take(24).AsNoTracking()
-            .Select(x => new ImageModel()
+            using (var context = new ProfileSampleEntities())
+            {
+                model = context.ImgSources.Take(24).AsNoTracking()
+                .Select(x => new ImageModel()
                 {
                     Name = x.Name,
                     Data = x.Data
                 }).ToList();
+            }
+
 
 
 
@@ -60,7 +62,7 @@ namespace ProfileSample.Controllers
                     {
                         byte[] buff = new byte[stream.Length];
 
-                        stream.Read(buff, 0, (int)stream.Length);
+                        stream.ReadAsync(buff, 0, (int)stream.Length);
 
                         var entity = new ImgSource()
                         {
@@ -69,7 +71,7 @@ namespace ProfileSample.Controllers
                         };
 
                         context.ImgSources.Add(entity);
-                        context.SaveChanges();
+                      await  context.SaveChangesAsync();
                     }
                 }
             }
