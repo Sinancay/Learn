@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using ProfileSample.DAL;
@@ -11,31 +13,42 @@ namespace ProfileSample.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+
+            //var sources = context.ImgSources.Take(20).Select(x => x.Id);
+
+            //foreach (var id in sources)
+            //{
+            //    var item = context.ImgSources.Find(id);
+
+            //    var obj = new ImageModel()
+            //    {
+            //        Name = item.Name,
+            //        Data = item.Data
+            //    };
+
+            //    model.Add(obj);
+            //} 
+
+            var temp = await Convert(); // First for added images db
+
+            var model = new List<ImageModel>();
             var context = new ProfileSampleEntities();
 
-            var sources = context.ImgSources.Take(20).Select(x => x.Id);
-            
-            var model = new List<ImageModel>();
-
-            foreach (var id in sources)
-            {
-                var item = context.ImgSources.Find(id);
-
-                var obj = new ImageModel()
+            model = context.ImgSources.Take(24).AsNoTracking()
+            .Select(x => new ImageModel()
                 {
-                    Name = item.Name,
-                    Data = item.Data
-                };
+                    Name = x.Name,
+                    Data = x.Data
+                }).ToList();
 
-                model.Add(obj);
-            } 
+
 
             return View(model);
         }
 
-        public ActionResult Convert()
+        public async Task<ActionResult> Convert()
         {
             var files = Directory.GetFiles(Server.MapPath("~/Content/Img"), "*.jpg");
 
@@ -47,7 +60,7 @@ namespace ProfileSample.Controllers
                     {
                         byte[] buff = new byte[stream.Length];
 
-                        stream.Read(buff, 0, (int) stream.Length);
+                        stream.Read(buff, 0, (int)stream.Length);
 
                         var entity = new ImgSource()
                         {
@@ -58,10 +71,17 @@ namespace ProfileSample.Controllers
                         context.ImgSources.Add(entity);
                         context.SaveChanges();
                     }
-                } 
+                }
             }
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your about page.";
+
+            return View();
         }
 
         public ActionResult Contact()
