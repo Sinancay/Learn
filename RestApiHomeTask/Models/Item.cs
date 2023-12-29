@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 namespace RestApiHomeTask;
-
 public partial class Item
 {
     public string Id { get; set; } = null!;

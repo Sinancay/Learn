@@ -9,86 +9,77 @@ namespace RestApiHomeTask.Controllers;
 [Consumes("application/json")]
 public class CategoryController : ControllerBase
 {
-    NpgsqlConnection conn = new NpgsqlConnection("Host=localhost; Database=HomeTaskDB; Username=postgres; Password=adminS;");
+    private readonly HomeTaskDbContext ht_context;
+    public CategoryController(HomeTaskDbContext context)
+    {
+         ht_context = context;
+    }
 
     [HttpGet(Name = "GetListOfCategories")]
     public IEnumerable<CategoryVMModel> Get()
     {
+        List<Category> categoryData = ht_context.Categories.ToList();
 
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand("Select * From category", conn);
-        // Execute the query and obtain a result set
-        NpgsqlDataReader reader = command.ExecuteReader();
-
-        List<CategoryVMModel> listOfCategory = new List<CategoryVMModel>();
+        List<CategoryVMModel> listOfCategories = new List<CategoryVMModel>();
         
-        while (reader.Read())
+        foreach (Category item in categoryData)
         {
           CategoryVMModel temp =  new CategoryVMModel
             {
-                Id = reader["id"].ToString(),
-                Name = reader["name"].ToString()
-            }; // Remember Type Casting is required here it has to be according to database column data type
-            listOfCategory.Add(temp);
+                Id = item.Id,
+                Name = item.Name
+            };
+          listOfCategories.Add(temp);
         }
-        reader.Close();
-        
-        command.Dispose();
-        conn.Close();
-        return listOfCategory.ToArray();
+
+        return listOfCategories.ToArray();
     }
 
      [HttpPost(Name = "CreateNewCategory")]
     public void CreateCategory(CategoryVMModel item)
     {
-
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO category (id, name) VALUES ('{item.Id}', '{item.Name}');", conn);
-        // Execute the query and obtain a result set
-        command.ExecuteReader();
-        
-        command.Dispose();
-        conn.Close();
+        using (var dbContextTransaction = ht_context.Database.BeginTransaction())
+        {
+                ht_context.Categories.Add(new Category(){
+                    Id=   item.Id,
+                    Name= item.Name
+                });
+        }
+        ht_context.SaveChanges();
     }
 
     [HttpPost(Name = "UpdateCategory")]
     public void UpdateCategory(CategoryVMModel item)
      {
+        var entity = ht_context.Categories.FirstOrDefault(x => x.Id == item.Id);
 
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"UPDATE category SET  name = '{item.Name}' WHERE id = '{item.Id}';", conn);
-        // Execute the query and obtain a result set
-        command.ExecuteReader();
-            
-        command.Dispose();
-        conn.Close();
+        entity.Name = item.Name;
+
+        ht_context.SaveChanges();
     }
 
-     [HttpDelete(Name = "DeleteCategory")]
-    public async void DeleteCategory(int item)
+     [HttpDelete("{id}")]
+    public async void DeleteCategory(int id)
      {
-        await DeleteRelatedItems(item);
-        conn.Open();
+        await DeleteRelatedItems(id);
 
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"DELETE FROM category WHERE id = '{item}';", conn);
-        // Execute the query and obtain a result set
-        command.ExecuteReader();
+        var entity = ht_context.Categories.FirstOrDefault(x => x.Id == id.ToString());
 
-        command.Dispose();
-        conn.Close();
+        if (entity != null) {
+        ht_context.Categories.Remove(entity);
+        ht_context.SaveChanges();
+        }
     }
     
     public async Task DeleteRelatedItems(int categoryId){
-        conn.Open();
-
-        NpgsqlCommand callChildData = new NpgsqlCommand($"DELETE FROM items WHERE categoryid = '{categoryId}';", conn);
-        callChildData.ExecuteReader();
-        callChildData.Dispose();
-        conn.Close();
+            var entityList = ht_context.Items.Where(x => x.Categoryid == categoryId.ToString()).ToList();
+            foreach(var entity in entityList){
+                if (entity != null) {
+                    ht_context.Items.Remove(entity);
+                    ht_context.SaveChanges();
+                }
+            }
+            
     }
     
 }

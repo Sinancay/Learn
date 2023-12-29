@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RestApiHomeTask;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestApiHomeTask.Controllers;
 
@@ -9,111 +10,102 @@ namespace RestApiHomeTask.Controllers;
 [Consumes("application/json")]
 public class ItemController : ControllerBase
 {
-    NpgsqlConnection conn = new NpgsqlConnection("Host=localhost; Database=HomeTaskDB; Username=postgres; Password=adminS;");
+    private readonly HomeTaskDbContext ht_context;
+    public ItemController(HomeTaskDbContext context)
+    {
+         ht_context = context;
+    }
 
     [HttpGet(Name = "GetItemList")]
     public IEnumerable<ItemVMModel> Get()
     {
-
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand("Select * From items", conn);
-        // Execute the query and obtain a result set
-        NpgsqlDataReader reader = command.ExecuteReader();
+        List<Item> itemsData = ht_context.Items.ToList();
 
         List<ItemVMModel> listOfItems = new List<ItemVMModel>();
         
-        while (reader.Read())
+        foreach (Item item in itemsData)
         {
           ItemVMModel temp =  new ItemVMModel
             {
-                Id = reader["id"].ToString(),
-                Name = reader["name"].ToString(),
-                Categoryid = reader["categoryId"].ToString(),
-                Details = reader["details"].ToString()
-            }; // Remember Type Casting is required here it has to be according to database column data type
-            listOfItems.Add(temp);
+                Id = item.Id,
+                Name = item.Name,
+                Categoryid = item.Categoryid,
+                Details = item.Details
+            };
+          listOfItems.Add(temp);
         }
-        reader.Close();
-        
-        command.Dispose();
-        conn.Close();
         return listOfItems.ToArray();
     }
     [HttpPost(Name = "ListItemsFilters")]
     public IEnumerable<ItemVMModel> ListItemsFilters(ItemFilter filter)
     {
-         conn.Open();
-         var whereClauseCategoryId = filter.Categoryid != null ?  $"WHERE categoryid = '{filter.Categoryid}'" : " ";
-         var orderBy = filter.PageNumber != null && filter.PageSize != null ?  ", ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RN"  :  ""; 
-         var addedOrderBy = filter.PageNumber != null && filter.PageSize != null ? "ORDER BY RN" : "";
-         var pageSettings = filter.PageNumber != null && filter.PageSize != null ? $"OFFSET {filter.PageNumber} ROWS FETCH NEXT {filter.PageSize} ROW ONLY" : " ";
+         var whereClauseCategoryId = (filter.Categoryid != null && filter.Categoryid != 0) ?  $"WHERE categoryid = '{filter.Categoryid}'" : " ";
+         var orderBy = (filter.PageNumber != null && filter.PageNumber != 0) && (filter.PageSize != null && filter.PageSize != 0) ?  ", ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RN"  :  ""; 
+         var addedOrderBy = (filter.PageNumber != null && filter.PageNumber != 0) && (filter.PageSize != null  && filter.PageSize != 0) ? "ORDER BY RN" : "";
+         var pageSettings = (filter.PageNumber != null  && filter.PageNumber != 0) && (filter.PageSize != null && filter.PageSize != 0) ? $"OFFSET '{filter.PageNumber}' ROWS FETCH NEXT '{filter.PageSize}' ROW ONLY" : " ";
+       
+         List<ItemVMModel> listOfItems = new List<ItemVMModel>();
 
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"Select * {orderBy} From items {whereClauseCategoryId} {addedOrderBy} {pageSettings} ", conn);
-        // Execute the query and obtain a result set
-        NpgsqlDataReader reader = command.ExecuteReader();
+         if(orderBy != "" && addedOrderBy != "" && pageSettings != "" && whereClauseCategoryId != ""){ // zero and null value not acceptable
+          
+            var ItemsFiltered = ht_context.Items
+                .FromSqlRaw($"Select * {orderBy} From items {whereClauseCategoryId} {addedOrderBy} {pageSettings}")
+                .ToList(); 
 
-        List<ItemVMModel> listOfItems = new List<ItemVMModel>();
-        
-        while (reader.Read())
-        {
-          ItemVMModel temp =  new ItemVMModel
+
+            foreach (Item item in ItemsFiltered)
             {
-                Id = reader["id"].ToString(),
-                Name = reader["name"].ToString(),
-                Categoryid = reader["categoryId"].ToString(),
-                Details = reader["details"].ToString()
-            }; // Remember Type Casting is required here it has to be according to database column data type
-            listOfItems.Add(temp);
-        }
-        reader.Close();
+                ItemVMModel temp =  new ItemVMModel
+                {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Categoryid = item.Categoryid,
+                        Details = item.Details
+                };
+                listOfItems.Add(temp);
+            }
+         }
         
-        command.Dispose();
-        conn.Close();
-        return listOfItems.ToArray();
+         
+         return listOfItems.ToArray();
     }
 
-     [HttpPost(Name = "CreateNewItem")]
+    [HttpPost(Name = "CreateNewItem")]
     public void CreateItem(ItemVMModel item)
     {
-
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO items (id, name, categoryid, details) VALUES ('{item.Id}', '{item.Name}', '{item.Categoryid}', '{item.Details}');", conn);
-        // Execute the query and obtain a result set
-        command.ExecuteReader();
-        
-        command.Dispose();
-        conn.Close();
+        using (var dbContextTransaction = ht_context.Database.BeginTransaction())
+        {
+                ht_context.Items.Add(new Item(){
+                    Id =  item.Id,
+                    Name = item.Name,
+                    Categoryid = item.Categoryid,
+                    Details = item.Details
+                });
+        }
+        ht_context.SaveChanges();
     }
 
     [HttpPost(Name = "UpdateItem")]
     public void UpdateItem(ItemVMModel item)
      {
+        var entity = ht_context.Items.FirstOrDefault(x => x.Id == item.Id);
 
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"UPDATE items SET  name = '{item.Name}, categoryid= '{item.Categoryid}, details= '{item.Details}' WHERE id = '{item.Id}';", conn);
-        // Execute the query and obtain a result set
-        command.ExecuteReader();
-            
-        command.Dispose();
-        conn.Close();
+        entity.Name = item.Name;
+        entity.Categoryid = item.Categoryid;
+        entity.Details = item.Details;
+
+        ht_context.SaveChanges();
     }
 
-     [HttpDelete(Name = "DeleteItem")]
-    public void DeleteItem(int item)
+     [HttpDelete("{id}")]
+    public void DeleteItem(int id)
      {
-        
-        conn.Open();
-        // Passing PostGre SQL Function Name
-        NpgsqlCommand command = new NpgsqlCommand($"DELETE FROM item WHERE id = '{item}';", conn);
-        // Execute the query and obtain a result set
-        command.ExecuteReader();
-            
-        command.Dispose();
-        conn.Close();
+        var entity = ht_context.Items.FirstOrDefault(x => x.Id == id.ToString());
+
+        if (entity != null) {
+        ht_context.Items.Remove(entity);
+        ht_context.SaveChanges();
+        }
     }
     
     
