@@ -1,111 +1,55 @@
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RestApiHomeTask;
+using RestApiHomeTask.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace RestApiHomeTask.Controllers;
 
 [ApiController]
-[Route("api/[controller]/[action]")]
+[Route("api/[controller]")]
 [Consumes("application/json")]
 public class ItemController : ControllerBase
 {
-    private readonly HomeTaskDbContext ht_context;
-    public ItemController(HomeTaskDbContext context)
+    private readonly IOperationService _serviceProvider;
+
+    public ItemController(IOperationService serviceProvider)
     {
-         ht_context = context;
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
+
 
     [HttpGet(Name = "GetItemList")]
-    public IEnumerable<ItemVMModel> Get()
+    public IEnumerable<ItemVMModel> GetAllItems()
     {
-        List<Item> itemsData = ht_context.Items.ToList();
+        List<ItemVMModel> listOfItems = _serviceProvider.GetAllItems();
 
-        List<ItemVMModel> listOfItems = new List<ItemVMModel>();
-        
-        foreach (Item item in itemsData)
-        {
-          ItemVMModel temp =  new ItemVMModel
-            {
-                Id = item.Id,
-                Name = item.Name,
-                Categoryid = item.Categoryid,
-                Details = item.Details
-            };
-          listOfItems.Add(temp);
-        }
-        return listOfItems.ToArray();
+        return listOfItems;
     }
-    [HttpPost(Name = "ListItemsFilters")]
+    [HttpPost("ItemFilter")]
     public IEnumerable<ItemVMModel> ListItemsFilters(ItemFilter filter)
     {
-         var whereClauseCategoryId = (filter.Categoryid != null && filter.Categoryid != 0) ?  $"WHERE categoryid = '{filter.Categoryid}'" : " ";
-         var orderBy = (filter.PageNumber != null && filter.PageNumber != 0) && (filter.PageSize != null && filter.PageSize != 0) ?  ", ROW_NUMBER() OVER(ORDER BY (SELECT NULL)) AS RN"  :  ""; 
-         var addedOrderBy = (filter.PageNumber != null && filter.PageNumber != 0) && (filter.PageSize != null  && filter.PageSize != 0) ? "ORDER BY RN" : "";
-         var pageSettings = (filter.PageNumber != null  && filter.PageNumber != 0) && (filter.PageSize != null && filter.PageSize != 0) ? $"OFFSET '{filter.PageNumber}' ROWS FETCH NEXT '{filter.PageSize}' ROW ONLY" : " ";
-       
-         List<ItemVMModel> listOfItems = new List<ItemVMModel>();
+         List<ItemVMModel> listOfItems = _serviceProvider.ListItemsFilters(filter);
 
-         if(orderBy != "" && addedOrderBy != "" && pageSettings != "" && whereClauseCategoryId != ""){ // zero and null value not acceptable
-          
-            var ItemsFiltered = ht_context.Items
-                .FromSqlRaw($"Select * {orderBy} From items {whereClauseCategoryId} {addedOrderBy} {pageSettings}")
-                .ToList(); 
-
-
-            foreach (Item item in ItemsFiltered)
-            {
-                ItemVMModel temp =  new ItemVMModel
-                {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Categoryid = item.Categoryid,
-                        Details = item.Details
-                };
-                listOfItems.Add(temp);
-            }
-         }
-        
-         
-         return listOfItems.ToArray();
+         return listOfItems;
     }
 
-    [HttpPost(Name = "CreateNewItem")]
+    [HttpPost(Name = "CreateItem")]
     public void CreateItem(ItemVMModel item)
     {
-        using (var dbContextTransaction = ht_context.Database.BeginTransaction())
-        {
-                ht_context.Items.Add(new Item(){
-                    Id =  item.Id,
-                    Name = item.Name,
-                    Categoryid = item.Categoryid,
-                    Details = item.Details
-                });
-        }
-        ht_context.SaveChanges();
+       _serviceProvider.CreateItem(item);
     }
 
-    [HttpPost(Name = "UpdateItem")]
+    [HttpPut(Name = "UpdateItem")]
     public void UpdateItem(ItemVMModel item)
-     {
-        var entity = ht_context.Items.FirstOrDefault(x => x.Id == item.Id);
-
-        entity.Name = item.Name;
-        entity.Categoryid = item.Categoryid;
-        entity.Details = item.Details;
-
-        ht_context.SaveChanges();
+    {
+        _serviceProvider.UpdateItem(item);
     }
 
      [HttpDelete("{id}")]
     public void DeleteItem(int id)
-     {
-        var entity = ht_context.Items.FirstOrDefault(x => x.Id == id.ToString());
-
-        if (entity != null) {
-        ht_context.Items.Remove(entity);
-        ht_context.SaveChanges();
-        }
+    {
+      _serviceProvider.DeleteItem(id);
     }
     
     

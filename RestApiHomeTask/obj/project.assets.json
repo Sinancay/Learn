@@ -4504,6 +4504,7 @@
     "net8.0": [
       "Microsoft.EntityFrameworkCore.Design >= 8.0.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.0",
+      "Microsoft.Extensions.DependencyInjection >= 8.0.0",
       "Newtonsoft.Json >= 13.0.1",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.0",
       "Swashbuckle.AspNetCore >= 6.4.0"
@@ -4553,6 +4554,10 @@
             "version": "[8.0.0, )"
           },
           "Microsoft.EntityFrameworkCore.SqlServer": {
+            "target": "Package",
+            "version": "[8.0.0, )"
+          },
+          "Microsoft.Extensions.DependencyInjection": {
             "target": "Package",
             "version": "[8.0.0, )"
           },
